@@ -28,5 +28,5 @@ module "compute" {
   vm_count            = var.compute.vm_count       
   vm_size             = var.compute.vm_size       
   admin_username      = var.compute.admin_username
-  ssh_public_key      = var.compute.ssh_public_key
+  ssh_public_key      = file("~/.ssh/id_rsa.pub")
 }
