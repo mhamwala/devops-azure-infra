@@ -1,0 +1,15 @@
+#TODO: This file is a placeholder for cloud-init configuration to restrict user access.
+# users:
+#   - name: ${username}
+#     groups: sudo
+#     shell: /bin/bash
+#     sudo: "${commands}"
+#     ssh-authorized-keys:
+#       - ${file("~/.ssh/id_rsa.pub")}
+
+# runcmd:
+#   - echo "${username} ALL=(ALL) NOPASSWD: ${commands}" > /etc/sudoers.d/${username}
+#   - chmod 440 /etc/sudoers.d/${username}
+#   - echo "Defaults:${username} !authenticate" >> /etc/sudoers.d/${username}
+#   - echo "Cmnd_Alias BLOCKED = /bin/bash, /bin/sh, /bin/su, /usr/bin/sudo" >> /etc/sudoers.d/${username}
+#   - echo "${username} ALL = ALL, !BLOCKED" >> /etc/sudoers.d/${username}
