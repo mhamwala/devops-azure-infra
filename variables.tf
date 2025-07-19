@@ -30,14 +30,14 @@ variable "networking" {
     vnet_address_space    = list(string)
     public_subnet_prefix  = string
     private_subnet_prefix = string
-    allowed_ssh_ips      = list(string)
+    allowed_ssh_ips       = list(string)
   })
-  default = {
-    vnet_address_space    = ["10.0.0.0/16"]
-    public_subnet_prefix  = "10.0.1.0/24"
-    private_subnet_prefix = "10.0.2.0/24"
-    allowed_ssh_ips      = []
-  }
+  # default = {
+  #   vnet_address_space    = ["10.0.0.0/16"]
+  #   public_subnet_prefix  = "10.0.1.0/24"
+  #   private_subnet_prefix = "10.0.2.0/24"
+  #   allowed_ssh_ips       = ["86.26.32.247/32"]
+  # }
 }
 
 variable "compute" {

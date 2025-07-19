@@ -4,7 +4,7 @@ variable "resource_group_name" {
 }
 
 variable "location" {
-  description = "Azure region for resources"
+  description = "Azure region"
   type        = string
 }
 
@@ -19,27 +19,23 @@ variable "environment" {
 }
 
 variable "vnet_address_space" {
-  description = "Address space for VNet"
+  description = "Virtual network address space"
   type        = list(string)
-  default     = ["10.0.0.0/16"]
 }
 
 variable "public_subnet_prefix" {
-  description = "Address prefix for public subnet (jump box)"
+  description = "Public subnet address prefix"
   type        = string
-  default     = "10.0.1.0/24"
 }
 
 variable "private_subnet_prefix" {
-  description = "Address prefix for private subnet (VMs)"
+  description = "Private subnet address prefix"
   type        = string
-  default     = "10.0.2.0/24"
 }
 
 variable "allowed_ssh_ips" {
-  description = "List of IPs allowed to SSH to jump box"
+  description = "List of IP addresses allowed to SSH"
   type        = list(string)
-  default     = ["0.0.0.0/0"]  # Should be restricted in production
 }
 
 variable "tags" {
