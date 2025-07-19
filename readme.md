@@ -114,7 +114,7 @@ The project is organized as follows:
 4. **Verify Deployment**:
    - **SSH to Jump Box**: Get IP from `terraform output jumpbox_public_ip` (add to `outputs.tf` if missing).
      ```bash
-     ssh -i ~/.ssh/azure-vm-key azureuser@<jumpbox_ip>
+     ssh -A -i ~/.ssh/id_rsa azureuser@<jumpbox_ip>
      ```
    - **SSH to Private VMs**: From jump box:
      ```bash
