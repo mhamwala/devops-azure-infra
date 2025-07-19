@@ -18,19 +18,6 @@ module "networking" {
   tags                  = var.tags
 }
 
-# compute Module
-module "compute" {
-  source              = "./modules/compute"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = var.location
-  prefix              = var.project.name
-  subnet_id           = module.networking.private_subnet_id
-  vm_count            = var.compute.vm_count       
-  vm_size             = var.compute.vm_size       
-  admin_username      = var.compute.admin_username
-  ssh_public_key      = file("~/.ssh/id_rsa.pub")
-}
-
 # Storage Module
 module "storage" {
   source              = "./modules/storage"
@@ -39,6 +26,23 @@ module "storage" {
   prefix              = var.project.name
   environment         = var.environment
   tags                = var.tags
+}
+
+# compute Module
+module "compute" {
+    source              = "./modules/compute"
+
+    resource_group_name = azurerm_resource_group.main.name
+    location            = var.location
+    prefix              = var.project.name
+    subnet_id           = module.networking.private_subnet_id
+    vm_count            = var.compute.vm_count       
+    vm_size             = var.compute.vm_size       
+    admin_username      = var.compute.admin_username
+    ssh_public_key      = file("~/.ssh/id_rsa.pub")
+    # storage_account_name = module.storage.storage_account_name
+    # storage_account_key  = module.storage.storage_account_key
+    # file_share_name      = module.storage.file_share_name
 }
 
 # User Management Module
@@ -72,42 +76,41 @@ resource "azurerm_network_interface" "jumpbox" {
 }
 
 resource "azurerm_linux_virtual_machine" "jumpbox" {
-  name                = "${var.project.name}-${var.environment}-jumpbox"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.main.name
-  size                = var.compute.vm_size  # Use same size as private VMs (B1s for free tier)
+    name                = "${var.project.name}-${var.environment}-jumpbox"
+    location            = var.location
+    resource_group_name = azurerm_resource_group.main.name
+    size                = var.compute.vm_size  # Use same size as private VMs (B1s for free tier)
+        
+    admin_username = var.compute.admin_username
 
-  admin_username = var.compute.admin_username
+    admin_ssh_key {
+        username   = var.compute.admin_username
+        public_key = file("~/.ssh/id_rsa.pub")  # Same key as private VMs
+    }
 
-  admin_ssh_key {
-    username   = var.compute.admin_username
-    public_key = file("~/.ssh/id_rsa.pub")  # Same key as private VMs
-  }
+    disable_password_authentication = true
 
-  disable_password_authentication = true
+    network_interface_ids = [
+        azurerm_network_interface.jumpbox.id
+    ]
 
-  network_interface_ids = [
-    azurerm_network_interface.jumpbox.id
-  ]
+    os_disk {
+        caching              = "ReadWrite"
+        storage_account_type = "Standard_LRS"
+    }
 
-  os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
+    source_image_reference {
+        publisher = "Canonical"
+        offer     = "0001-com-ubuntu-server-jammy"
+        sku       = "22_04-lts-gen2"
+        version   = "latest"
+    }
 
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts-gen2"
-    version   = "latest"
-  }
+    custom_data = base64encode(templatefile("${path.module}/scripts/mount_share.sh.tpl", {
+        storage_account_name = module.storage.storage_account_name
+        storage_account_key  = module.storage.storage_account_key
+        file_share_name      = "vmshare"
+    }))
 
-  # TO DO: Add custom_data for file share mounting if needed (from storage module)
-  # custom_data = base64encode(templatefile("${path.module}/mount_share.sh.tpl", {
-  #   storage_account_name = module.storage.storage_account_name
-  #   file_share_name      = "myshare"
-  #   storage_account_key  = module.storage.storage_account_key
-  # }))
-
-  tags = var.tags
+    tags = var.tags
 }
