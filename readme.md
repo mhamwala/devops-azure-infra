@@ -122,7 +122,7 @@ The project is organized as follows:
      ```
    - **Check File Share**: On VMs:
      ```bash
-     df -h | grep myshare
+     df -h | grep vmshare
      ```
    - Azure Portal: Log in to portal.azure.com, check resource group for created resources.
 
