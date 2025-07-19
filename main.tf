@@ -40,3 +40,11 @@ module "storage" {
   environment         = var.environment
   tags                = var.tags
 }
+
+# User Management Module
+module "user_management" {
+  source           = "./modules/user_management"
+  users            = var.users
+  vm_ips           = module.compute.vm_private_ips
+  admin_username   = var.compute.admin_username
+}

@@ -56,6 +56,16 @@ variable "compute" {
   }
 }
 
+variable "users" {
+  description = "Map of users to create"
+  type = map(object({
+    user_principal_name = string
+    display_name        = string
+    mail_nickname       = string
+  }))
+  default = {}
+}
+
 variable "tags" {
   description = "Tags to apply to all resources"
   type        = map(string)
