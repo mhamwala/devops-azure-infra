@@ -40,3 +40,19 @@ variable "ssh_public_key" {
   type        = string
   sensitive   = true
 }
+
+variable "storage_account_name" {
+  description = "Name of the storage account for mounting"
+  type        = string
+}
+
+variable "storage_account_key" {
+  description = "Key of the storage account for mounting"
+  type        = string
+  sensitive   = true
+}
+
+variable "file_share_name" {
+  description = "Name of the file share to mount"
+  type        = string
+}

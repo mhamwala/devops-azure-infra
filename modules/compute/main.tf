@@ -38,6 +38,12 @@ resource "azurerm_linux_virtual_machine" "vm" {
     storage_account_type = "Standard_LRS"
   }
 
+  custom_data = base64encode(templatefile("${path.module}/scripts/mount_share.sh.tpl", {
+    storage_account_name = var.storage_account_name
+    storage_account_key  = var.storage_account_key
+    file_share_name      = var.file_share_name
+  }))
+
   source_image_reference {
     publisher = "Canonical"
     offer     = "0001-com-ubuntu-server-jammy"

@@ -40,9 +40,9 @@ module "compute" {
   vm_size             = var.compute.vm_size
   admin_username      = var.compute.admin_username
   ssh_public_key      = file("~/.ssh/id_rsa.pub")
-  # storage_account_name = module.storage.storage_account_name
-  # storage_account_key  = module.storage.storage_account_key
-  # file_share_name      = module.storage.file_share_name
+  storage_account_name = module.storage.storage_account_name
+  storage_account_key  = module.storage.storage_account_key
+  file_share_name      = module.storage.file_share_name
 }
 
 # User Management Module
@@ -106,7 +106,7 @@ resource "azurerm_linux_virtual_machine" "jumpbox" {
     version   = "latest"
   }
 
-  custom_data = base64encode(templatefile("${path.module}/scripts/mount_share.sh.tpl", {
+  custom_data = base64encode(templatefile("${path.module}/modules/compute/scripts/mount_share.sh.tpl", {
     storage_account_name = module.storage.storage_account_name
     storage_account_key  = module.storage.storage_account_key
     file_share_name      = "vmshare"
