@@ -145,4 +145,9 @@ terraform destroy -var-file=environments/dev/terraform.tfvars
 - **Troubleshooting**: If errors occur, run `terraform validate`. Check logs or share error output for help.
 
 
-- **TO DO**: use Azure Key Vault for secrets (passwords, keys).
+- **TO DO**: 
+   - use Azure Key Vault for secrets (passwords, keys).
+   - split resources into separate resource groups
+   - finish parametising modules, so that prd/staging envionments can have unique config
+   - fix deprecating references
+   - create pipeline to deploy these resources

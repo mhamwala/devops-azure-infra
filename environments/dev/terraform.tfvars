@@ -36,14 +36,14 @@ storage = {
 # User Management configuration
 users = {
   user1 = {
-    user_principal_name = "test@musahamwalaicloud.onmicrosoft.com"
+    user_principal_name = "Isaac@musahamwalaicloud.onmicrosoft.com"
     display_name        = "Isaac Asimov"
-    mail_nickname       = "user1"
+    mail_nickname       = "Isaac"
   }
   user2 = {
-    user_principal_name = "test2@musahamwalaicloud.onmicrosoft.com"
-    display_name        = "Ada"
-    mail_nickname       = "user2"
+    user_principal_name = "Adalovelace@musahamwalaicloud.onmicrosoft.com"
+    display_name        = "Ada lovelace"
+    mail_nickname       = "Ada"
   }
 }
 
