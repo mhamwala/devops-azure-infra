@@ -12,6 +12,11 @@ variable "project" {
   }
 }
 
+variable "subscription_id" {
+  description = "The Azure Subscription ID"
+  type        = string
+}
+
 variable "environment" {
   description = "Environment name"
   type        = string
