@@ -9,7 +9,7 @@ The setup uses modular Terraform code with modules for networking, compute, stor
 Before running the deployment, ensure you have the following:
 
 1. **Azure Account**:
-   - A free Azure account with an active subscription.
+   - Azure account with an active subscription.
    - Azure CLI installed and authenticated: Install from [docs.microsoft.com/cli/azure/install-azure-cli](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli), then run `az login`.
    - Verified domain in Azure Entra ID for user creation (use your default `<yourtenant>.onmicrosoft.com` or verify a custom domain in the Azure portal under Entra ID > Custom domain names).
 
