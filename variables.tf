@@ -65,3 +65,4 @@ variable "tags" {
     ManagedBy   = "devops-team"
   }
 }
+
