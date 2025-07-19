@@ -126,6 +126,10 @@ The project is organized as follows:
      ```
    - Azure Portal: Log in to portal.azure.com, check resource group for created resources.
 
+     <img width="1121" height="289" alt="Screenshot 2025-07-19 at 14 49 35" src="https://github.com/user-attachments/assets/6ea27604-5a6c-4578-898b-1711d7e1ae2b" />
+
+     <img width="779" height="945" alt="Screenshot 2025-07-19 at 14 47 30" src="https://github.com/user-attachments/assets/cd160b19-dff3-4805-8058-7e8b7ff65fd9" />
+
 ## Cleanup
 
 To avoid charges, destroy the infrastructure:
@@ -133,6 +137,7 @@ To avoid charges, destroy the infrastructure:
 terraform destroy -var-file=environments/dev/terraform.tfvars
 ```
 - Confirm with `yes`. This deletes all resources.
+
 
 ## Notes
 - **Costs**: Stays within Azure free tier (750 hours B1s VMs/month, 5GB storage). Monitor billing in the Azure portal.
