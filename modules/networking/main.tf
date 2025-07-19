@@ -20,10 +20,12 @@ resource "azurerm_subnet" "public" {
 
 # Private Subnet (for VMs)
 resource "azurerm_subnet" "private" {
-  name                 = "private-subnet"
-  resource_group_name  = var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.main.name
-  address_prefixes     = [var.private_subnet_prefix]
+    name                 = "private-subnet"
+    resource_group_name  = var.resource_group_name
+    virtual_network_name = azurerm_virtual_network.main.name
+    address_prefixes     = [var.private_subnet_prefix]
+
+    service_endpoints    = ["Microsoft.Storage"]
 }
 
 # Network Security Group for Jump Box
