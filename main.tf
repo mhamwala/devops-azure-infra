@@ -30,27 +30,27 @@ module "storage" {
 
 # compute Module
 module "compute" {
-    source              = "./modules/compute"
+  source = "./modules/compute"
 
-    resource_group_name = azurerm_resource_group.main.name
-    location            = var.location
-    prefix              = var.project.name
-    subnet_id           = module.networking.private_subnet_id
-    vm_count            = var.compute.vm_count       
-    vm_size             = var.compute.vm_size       
-    admin_username      = var.compute.admin_username
-    ssh_public_key      = file("~/.ssh/id_rsa.pub")
-    # storage_account_name = module.storage.storage_account_name
-    # storage_account_key  = module.storage.storage_account_key
-    # file_share_name      = module.storage.file_share_name
+  resource_group_name = azurerm_resource_group.main.name
+  location            = var.location
+  prefix              = var.project.name
+  subnet_id           = module.networking.private_subnet_id
+  vm_count            = var.compute.vm_count
+  vm_size             = var.compute.vm_size
+  admin_username      = var.compute.admin_username
+  ssh_public_key      = file("~/.ssh/id_rsa.pub")
+  # storage_account_name = module.storage.storage_account_name
+  # storage_account_key  = module.storage.storage_account_key
+  # file_share_name      = module.storage.file_share_name
 }
 
 # User Management Module
 module "user_management" {
-  source           = "./modules/user_management"
-  users            = var.users
-  vm_ips           = module.compute.vm_private_ips
-  admin_username   = var.compute.admin_username
+  source         = "./modules/user_management"
+  users          = var.users
+  vm_ips         = module.compute.vm_private_ips
+  admin_username = var.compute.admin_username
 }
 
 # Jump Box VM in Public Subnet
@@ -69,48 +69,48 @@ resource "azurerm_network_interface" "jumpbox" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = module.networking.public_subnet_id  # From networking module
+    subnet_id                     = module.networking.public_subnet_id # From networking module
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.jumpbox.id
   }
 }
 
 resource "azurerm_linux_virtual_machine" "jumpbox" {
-    name                = "${var.project.name}-${var.environment}-jumpbox"
-    location            = var.location
-    resource_group_name = azurerm_resource_group.main.name
-    size                = var.compute.vm_size  # Use same size as private VMs (B1s for free tier)
-        
-    admin_username = var.compute.admin_username
+  name                = "${var.project.name}-${var.environment}-jumpbox"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.main.name
+  size                = var.compute.vm_size # Use same size as private VMs (B1s for free tier)
 
-    admin_ssh_key {
-        username   = var.compute.admin_username
-        public_key = file("~/.ssh/id_rsa.pub")  # Same key as private VMs
-    }
+  admin_username = var.compute.admin_username
 
-    disable_password_authentication = true
+  admin_ssh_key {
+    username   = var.compute.admin_username
+    public_key = file("~/.ssh/id_rsa.pub") # Same key as private VMs
+  }
 
-    network_interface_ids = [
-        azurerm_network_interface.jumpbox.id
-    ]
+  disable_password_authentication = true
 
-    os_disk {
-        caching              = "ReadWrite"
-        storage_account_type = "Standard_LRS"
-    }
+  network_interface_ids = [
+    azurerm_network_interface.jumpbox.id
+  ]
 
-    source_image_reference {
-        publisher = "Canonical"
-        offer     = "0001-com-ubuntu-server-jammy"
-        sku       = "22_04-lts-gen2"
-        version   = "latest"
-    }
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
 
-    custom_data = base64encode(templatefile("${path.module}/scripts/mount_share.sh.tpl", {
-        storage_account_name = module.storage.storage_account_name
-        storage_account_key  = module.storage.storage_account_key
-        file_share_name      = "vmshare"
-    }))
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
+    version   = "latest"
+  }
 
-    tags = var.tags
+  custom_data = base64encode(templatefile("${path.module}/scripts/mount_share.sh.tpl", {
+    storage_account_name = module.storage.storage_account_name
+    storage_account_key  = module.storage.storage_account_key
+    file_share_name      = "vmshare"
+  }))
+
+  tags = var.tags
 }
