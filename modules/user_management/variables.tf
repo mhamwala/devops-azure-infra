@@ -9,10 +9,10 @@ variable "users" {
 
 variable "vm_ips" {
   description = "List of VM IPs for sudo configuration"
-  type = list(string)
+  type        = list(string)
 }
 
 variable "admin_username" {
   description = "Admin username for VMs"
-  type = string
+  type        = string
 }

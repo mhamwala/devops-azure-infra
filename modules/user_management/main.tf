@@ -18,15 +18,15 @@ resource "tls_private_key" "user_ssh_keys" {
 resource "local_file" "user_ssh_private_keys" {
   for_each = var.users
 
-  content  = tls_private_key.user_ssh_keys[each.key].private_key_pem
-  filename = "${path.module}/${each.key}-ssh-key.pem"
+  content         = tls_private_key.user_ssh_keys[each.key].private_key_pem
+  filename        = "${path.module}/${each.key}-ssh-key.pem"
   file_permission = "0600"
 }
 
 resource "random_password" "user_passwords" {
   for_each = var.users
 
-  length = 16
-  special = true
+  length           = 16
+  special          = true
   override_special = "!@#$%"
 }

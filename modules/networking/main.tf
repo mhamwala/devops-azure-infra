@@ -1,31 +1,31 @@
 # Virtual Network
 resource "azurerm_virtual_network" "main" {
-    name                = "${var.prefix}-${var.environment}-vnet"
-    location            = var.location
-    resource_group_name = var.resource_group_name
-    address_space       = var.vnet_address_space
-    
-    tags = var.tags
-}   
+  name                = "${var.prefix}-${var.environment}-vnet"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  address_space       = var.vnet_address_space
+
+  tags = var.tags
+}
 
 # Public Subnet (for Jump Box)
 resource "azurerm_subnet" "public" {
-    name                 = "public-subnet"
-    resource_group_name  = var.resource_group_name
-    virtual_network_name = azurerm_virtual_network.main.name
-    address_prefixes     = [var.public_subnet_prefix]
+  name                 = "public-subnet"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = [var.public_subnet_prefix]
 
-    service_endpoints    = ["Microsoft.Storage"]
+  service_endpoints = ["Microsoft.Storage"]
 }
 
 # Private Subnet (for VMs)
 resource "azurerm_subnet" "private" {
-    name                 = "private-subnet"
-    resource_group_name  = var.resource_group_name
-    virtual_network_name = azurerm_virtual_network.main.name
-    address_prefixes     = [var.private_subnet_prefix]
+  name                 = "private-subnet"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = [var.private_subnet_prefix]
 
-    service_endpoints    = ["Microsoft.Storage"]
+  service_endpoints = ["Microsoft.Storage"]
 }
 
 # Network Security Group for Jump Box
@@ -33,7 +33,7 @@ resource "azurerm_network_security_group" "jump_box" {
   name                = "${var.prefix}-${var.environment}-jump-nsg"
   location            = var.location
   resource_group_name = var.resource_group_name
-  
+
   tags = var.tags
 }
 
@@ -57,7 +57,7 @@ resource "azurerm_network_security_group" "private_vms" {
   name                = "${var.prefix}-${var.environment}-private-nsg"
   location            = var.location
   resource_group_name = var.resource_group_name
-  
+
   tags = var.tags
 }
 
