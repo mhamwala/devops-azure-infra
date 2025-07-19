@@ -11,7 +11,7 @@ networking = {
   vnet_address_space    = ["10.0.0.0/16"]
   public_subnet_prefix  = "10.0.1.0/24"
   private_subnet_prefix = "10.0.2.0/24"
-  allowed_ssh_ips      = ["86.26.32.247/32"]
+  allowed_ssh_ips       = [""]
 }
 
 compute = {
