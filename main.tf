@@ -19,6 +19,7 @@ resource "azurerm_subnet" "internal" {
   address_prefixes     = [var.networking.private_subnet_prefix]
 }
 
+# compute Module
 module "compute" {
   source              = "./modules/compute"
   resource_group_name = azurerm_resource_group.main.name
@@ -29,4 +30,14 @@ module "compute" {
   vm_size             = var.compute.vm_size       
   admin_username      = var.compute.admin_username
   ssh_public_key      = file("~/.ssh/id_rsa.pub")
+}
+
+# Storage Module
+module "storage" {
+  source              = "./modules/storage"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = var.location
+  prefix              = var.project.name
+  environment         = var.environment
+  tags                = var.tags
 }

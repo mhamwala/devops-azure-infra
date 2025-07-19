@@ -21,6 +21,16 @@ compute = {
   ssh_public_key = ""
 }
 
+# Storage configuration (if you add it as a variable)
+storage = {
+  account_tier             = "Standard"
+  account_replication_type = "LRS"  # Locally Redundant Storage (cheapest)
+  file_share_quota         = 5      # 5 GB for free tier
+  enable_lifecycle_policy  = true
+  archive_after_days       = 7
+  delete_after_days        = 365
+}
+
 tags = {
   Environment = "dev"
   Project     = "azure-iac"
