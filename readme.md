@@ -1,8 +1,8 @@
 # Azure Infrastructure Deployment with Terraform
 
-This repository contains an Infrastructure as Code (IaC) solution using Terraform to deploy a secure Azure cloud infrastructure for virtual machine infrastructure (resource group, VNet with public and private subnets, NSGs, jump box, private VMs), storage configuration (storage account with encryption, file share mounted via SMB, lifecycle policies), and optional user management (Azure Entra ID users, SSH key generation, sudo restrictions on VMs).
+This repository contains an Infrastructure as Code (IaC) solution using Terraform to deploy a secure Azure cloud infrastructure. for virtual machine infrastructure (resource group, VNet with public and private subnets, NSGs, jump box, private VMs), storage configuration (storage account with encryption, file share mounted via SMB, lifecycle policies), and optional user management (Azure Entra ID users, SSH key generation).
 
-The setup uses modular Terraform code with modules for networking, compute, storage, and user management. It's designed for a free-tier Azure account to minimize costs.
+The setup uses modular Terraform code with modules for networking, compute, storage, and user management.
 
 ## Prerequisites
 
@@ -117,7 +117,7 @@ The project is organized as follows:
 4. **Verify Deployment**:
    - **SSH to Jump Box**: Get IP from `terraform output jumpbox_public_ip` (add to `outputs.tf` if missing).
      ```bash
-     ssh -i ~/.ssh/azure-vm-key azureuser@<jumpbox_ip>
+     ssh -A -i ~/.ssh/id_rsa azureuser@<jumpbox_ip>
      ```
    - **SSH to Private VMs**: From jump box:
      ```bash
