@@ -9,7 +9,7 @@ The setup uses modular Terraform code with modules for networking, compute, stor
 Before running the deployment, ensure you have the following:
 
 1. **Azure Account**:
-   - Azure account with an active subscription.
+   - A free Azure account with an active subscription. Sign up at [azure.microsoft.com/free](https://azure.microsoft.com/free) if you don't have one (includes $200 credit for 30 days and free services like 750 hours of B1s VMs/month).
    - Azure CLI installed and authenticated: Install from [docs.microsoft.com/cli/azure/install-azure-cli](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli), then run `az login`.
    - Verified domain in Azure Entra ID for user creation (use your default `<yourtenant>.onmicrosoft.com` or verify a custom domain in the Azure portal under Entra ID > Custom domain names).
 
@@ -23,13 +23,14 @@ Before running the deployment, ensure you have the following:
    - Optional: VS Code for editing files: `brew install --cask visual-studio-code`.
 
 4. **SSH Key**:
-   - Generate an SSH key pair: `ssh-keygen -t rsa -b 4096 -f ~/.ssh/azure-vm-key -N ""`.
-   - Update `environments/dev/terraform.tfvars` with your SSH public key if not using `file("~/.ssh/id_rsa.pub")` in `main.tf`.
+   - Generate an SSH key pair if you don't have one: Run `ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""` (creates public key at `~/.ssh/id_rsa.pub` and private at `~/.ssh/id_rsa`).
+   - This key is used for VM access. If using a different key, update the path in `main.tf` (e.g., `file("~/.ssh/your_key.pub")`) or set the public key string in tfvars.
 
-5. **Update tfvars**:
+5. **Update tfvars**: (After git clone)
    - Edit `environments/dev/terraform.tfvars`:
      - Set `allowed_ssh_ips` to your public IP: Run `curl ifconfig.me` to get it, then set `allowed_ssh_ips = ["<your_ip>/32"]`.
-     - Set `users` with your verified Entra ID domain (e.g., `testuser@<yourtenant>.onmicrosoft.com`).
+     - Set `users` with your verified Entra ID domain (e.g., `user1@<yourtenant>.onmicrosoft.com`). The domain must be verified in Azure; use the default onmicrosoft.com if no custom domain is verified.
+     - `ssh_public_key`: Set to your SSH public key string or keep as default if using `file("~/.ssh/id_rsa.pub")` in `main.tf`.
 
 ## Directory Structure
 
@@ -95,6 +96,7 @@ The project is organized as follows:
      terraform plan -var-file=environments/dev/terraform.tfvars
      ```
      - Expected: Shows resources to create (resource group, VNet, subnets, NSGs, jump box, private VMs, storage account, file share, Entra ID users, SSH keys).
+   - Note: Before planning, ensure you have your Azure subscription ID, you will be prompted to enter it before the plan and apply (or run `az account set --subscription <id>` in Azure CLI).
 
 2. **Apply the Deployment**:
    - Create the infrastructure:
@@ -107,6 +109,7 @@ The project is organized as follows:
        - Compute: Jump box in public subnet, two private VMs in private subnet.
        - Storage: Storage account with encryption, file share mounted on VMs via SMB, lifecycle policies (archive after 7 days, delete after 365 days).
        - Users: Entra ID users with generated passwords and SSH keys; sudo restrictions configured on VMs.
+     - Duration: ~5-10 minutes.
 
 3. **View Outputs**:
    - Run `terraform output` to see values like `resource_group_name`, `user_ssh_public_keys`, `user_passwords` (sensitive, use `terraform output user_passwords` for specific ones).
@@ -138,16 +141,26 @@ terraform destroy -var-file=environments/dev/terraform.tfvars
 ```
 - Confirm with `yes`. This deletes all resources.
 
+## Troubleshooting
+- **Intermittent Network Errors** (e.g., "HTTP response was nil; connection may have been reset" during resource creation):
+  - This is usually a temporary connectivity issue with the Azure API. Simply re-run the apply command:
+    ```bash
+    terraform apply -var-file=environments/dev/terraform.tfvars
+    ```
+  - If it persists, check your internet connection, switch networks, or run with reduced parallelism: `terraform apply -var-file=environments/dev/terraform.tfvars --parallelism=1`.
+- **SSH Connection Issues**: Ensure your public IP matches `allowed_ssh_ips` in tfvars. Use `curl ifconfig.me` to check and update tfvars if changed, then re-apply.
+- **Mount Errors for File Share**: If `df -h | grep vmshare` is empty, manually mount (see script in modules/compute/mount_share.sh.tpl) or check dmesg for CIFS errors.
+- **Other Errors**: Run `terraform validate` for syntax issues. For runtime errors, check Azure portal logs.
 
 ## Notes
 - **Costs**: Stays within Azure free tier (750 hours B1s VMs/month, 5GB storage). Monitor billing in the Azure portal.
-- **Security**: Use restricted IPs in `allowed_ssh_ips`. SSH keys are 
+- **Security**: Use restricted IPs in `allowed_ssh_ips`. SSH keys are generated per user; store private keys securely (do not commit to Git).
 - **Troubleshooting**: If errors occur, run `terraform validate`. Check logs or share error output for help.
 
-
 - **TO DO**: 
+   - write shell script to set allowed ssh_keys and update the domain id.
    - use Azure Key Vault for secrets (passwords, keys).
    - split resources into separate resource groups
-   - finish parametising modules, so that prd/staging envionments can have unique config
-   - fix deprecating references
+   - add prd/staging envionments can copy dev tfvars and use unique config (scaled up to meet prd demends)
    - create pipeline to deploy these resources
+```
